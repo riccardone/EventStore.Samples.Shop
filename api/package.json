@@ -1,0 +1,19 @@
+{
+  "name": "shop-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/riccardone/EventStore.Samples.Shop",
+  "author": "Riccardo Di Nuzzo",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node ./index.js",
+    "test": "mocha --exit"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "node-eventstore-client": "^0.2.7",
+    "uuid": "^3.3.2"
+  }
+}
