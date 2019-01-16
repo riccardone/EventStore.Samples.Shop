@@ -1,18 +1,18 @@
-﻿namespace EventStore.Shop.Sales.Messages.Events
+﻿using System.Collections.Generic;
+
+namespace EventStore.Shop.Sales.Messages.Events
 {
     public class BasketCreated : Event
     {
         public string Id { get; }
-        public string CorrelationId { get; }
-        public string CausationId { get; }
         public string ClientId { get; }
+        public IDictionary<string, string> Metadata { get; }
 
-        public BasketCreated(string id, string causationId, string correlationId, string clientId)
+        public BasketCreated(string id, string clientId, IDictionary<string, string> metadata)
         {
             Id = id;
-            CausationId = causationId;
-            CorrelationId = correlationId;
             ClientId = clientId;
+            Metadata = metadata;
         }
     }
 }

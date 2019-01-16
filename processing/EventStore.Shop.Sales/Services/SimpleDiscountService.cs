@@ -45,9 +45,12 @@ namespace EventStore.Shop.Sales.Services
                     count++;
                     if (count != 2) continue;
                     var breadToDiscount = breads.Pop();
-                    history.Add(new DiscountApplied(Guid.NewGuid().ToString(), breadToDiscount.CausationId, breadToDiscount.CorrelationId,
-                        "BreadAndButterDiscount", breadToDiscount.Id,
-                        breadToDiscount.Cost * 50 / 100));
+                    history.Add(new DiscountApplied(Guid.NewGuid().ToString(), "BreadAndButterDiscount",
+                        breadToDiscount.Id, breadToDiscount.Cost * 50 / 100, new Dictionary<string, string>
+                        {
+                            {"$correlationId", breadToDiscount.Metadata["$correlationId"]},
+                            {"$causationId", breadToDiscount.Metadata["$causationId"]}
+                        }));
                     count = 0;
                 }
             }
@@ -68,8 +71,12 @@ namespace EventStore.Shop.Sales.Services
                     var milkToDiscount = milks.Pop();
                     count++;
                     if (count < 4) continue;
-                    history.Add(new DiscountApplied(Guid.NewGuid().ToString(), milkToDiscount.CausationId, milkToDiscount.CorrelationId, "MilkDiscount",
-                        milkToDiscount.Id, milkToDiscount.Cost));
+                    history.Add(new DiscountApplied(Guid.NewGuid().ToString(), "MilkDiscount", milkToDiscount.Id,
+                        milkToDiscount.Cost, new Dictionary<string, string>
+                        {
+                            {"$correlationId", milkToDiscount.Metadata["$correlationId"]},
+                            {"$causationId", milkToDiscount.Metadata["$causationId"]}
+                        }));
                     count = 0;
                 }
             }

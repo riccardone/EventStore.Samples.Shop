@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using EventStore.Shop.Sales;
+using EventStore.Shop.Sales.Aggregates;
 using EventStore.Shop.Sales.Messages.Commands;
 using EventStore.Shop.Sales.Services;
 using Xunit;
@@ -15,13 +16,13 @@ namespace EventStore.Shop.Tests
             // set up
             var basketId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
-            var cmd = new CreateBasket(basketId.ToString(), clientId.ToString());
+            var cmd = new CreateBasket(basketId.ToString(), clientId.ToString(), null);
 
             // act
             var results = Basket.Create(cmd);
 
             // verify
-            Assert.Equal(results.First().Id, basketId.ToString());
+            Assert.Equal(results.First().Metadata["$correlationId"], basketId.ToString());
         }
 
         [Fact]
@@ -30,11 +31,16 @@ namespace EventStore.Shop.Tests
             // set up
             var basketId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
-            var createCommand = new CreateBasket(basketId.ToString(), clientId.ToString());
-            var buyButterCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Butter", 0.80m);
-            var buyButterCommand2 = new AddProduct(createCommand.Id, basketId.ToString(), "Butter", 0.80m);
-            var buyBreadCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Bread", 1.00m);
-            var buyBreadCommand2 = new AddProduct(createCommand.Id, basketId.ToString(), "Bread", 1.00m);
+            var createCommand = new CreateBasket(basketId.ToString(), clientId.ToString(),
+                new Dictionary<string, string> { { "$correlationId", "test" } });
+            var buyButterCommand1 = new AddProduct(createCommand.Id, "Butter", 0.80m,
+                new Dictionary<string, string> { { "$correlationId", basketId.ToString() } });
+            var buyButterCommand2 = new AddProduct(createCommand.Id, "Butter", 0.80m,
+                new Dictionary<string, string> { { "$correlationId", basketId.ToString() } });
+            var buyBreadCommand1 = new AddProduct(createCommand.Id, "Bread", 1.00m,
+                new Dictionary<string, string> { { "$correlationId", basketId.ToString() } });
+            var buyBreadCommand2 = new AddProduct(createCommand.Id, "Bread", 1.00m,
+                new Dictionary<string, string> { { "$correlationId", basketId.ToString() } });
             var inMemoryModel = new TestModel();
 
             // act
@@ -55,10 +61,14 @@ namespace EventStore.Shop.Tests
             // set up
             var basketId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
-            var createCommand = new CreateBasket(basketId.ToString(), clientId.ToString());
-            var buyButterCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Butter", 0.80m);
-            var buyBreadCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Bread", 1.00m);
-            var buyMilkCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
+            var createCommand = new CreateBasket(basketId.ToString(), clientId.ToString(),
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyButterCommand1 = new AddProduct(createCommand.Id, "Butter", 0.80m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyBreadCommand1 = new AddProduct(createCommand.Id, "Bread", 1.00m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand1 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
             var inMemoryModel = new TestModel();
 
             // act
@@ -78,11 +88,16 @@ namespace EventStore.Shop.Tests
             // set up
             var basketId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
-            var createCommand = new CreateBasket(basketId.ToString(), clientId.ToString());
-            var buyMilkCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand2 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand3 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand4 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
+            var createCommand = new CreateBasket(basketId.ToString(), clientId.ToString(),
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand1 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand2 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand3 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand4 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
             var inMemoryModel = new TestModel();
 
             // act
@@ -103,18 +118,30 @@ namespace EventStore.Shop.Tests
             // set up
             var basketId = Guid.NewGuid();
             var clientId = Guid.NewGuid();
-            var createCommand = new CreateBasket(basketId.ToString(), clientId.ToString());
-            var buyButterCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Butter", 0.80m);
-            var buyButterCommand2 = new AddProduct(createCommand.Id, basketId.ToString(), "Butter", 0.80m);
-            var buyMilkCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand2 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand3 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand4 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand5 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand6 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand7 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyMilkCommand8 = new AddProduct(createCommand.Id, basketId.ToString(), "Milk", 1.15m);
-            var buyBreadCommand1 = new AddProduct(createCommand.Id, basketId.ToString(), "Bread", 1.00m);
+            var createCommand = new CreateBasket(basketId.ToString(), clientId.ToString(),
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyButterCommand1 = new AddProduct(createCommand.Id, "Butter", 0.80m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyButterCommand2 = new AddProduct(createCommand.Id, "Butter", 0.80m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand1 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand2 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand3 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand4 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand5 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand6 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand7 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyMilkCommand8 = new AddProduct(createCommand.Id, "Milk", 1.15m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
+            var buyBreadCommand1 = new AddProduct(createCommand.Id, "Bread", 1.00m,
+                new Dictionary<string, string> {{"$correlationId", basketId.ToString()}});
             var inMemoryModel = new TestModel();
 
             // act

@@ -1,16 +1,18 @@
-﻿namespace EventStore.Shop.Sales.Messages.Commands
+﻿using System.Collections.Generic;
+
+namespace EventStore.Shop.Sales.Messages.Commands
 {
     public class AddProduct : Command
     {
-        public string CorrelationId { get; }
         public string Name { get; set; }
         public decimal Cost { get; set; }
         public string Id { get; }
+        public IDictionary<string, string> Metadata { get; }
 
-        public AddProduct(string id, string correlationId, string name, decimal cost)
+        public AddProduct(string id, string name, decimal cost, IDictionary<string, string> metadata)
         {
+            Metadata = metadata;
             Id = id;
-            CorrelationId = correlationId;
             Name = name;
             Cost = cost;
         }
