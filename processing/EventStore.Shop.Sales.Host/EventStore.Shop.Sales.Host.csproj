@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="nlog" Version="4.5.11" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EventStore.Shop.Sales.Adapter\EventStore.Shop.Sales.Adapter.csproj" />
     <ProjectReference Include="..\EventStore.Shop.Sales\EventStore.Shop.Sales.csproj" />
   </ItemGroup>

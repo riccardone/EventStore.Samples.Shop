@@ -8,6 +8,6 @@ namespace EventStore.Shop.Sales.Adapter
     {
         IEnumerable<Event> Get(string id);
         IEnumerable<Event> Get(string id, int eventsToLoad);
-        Task<bool> Set(string id, List<Event> history);
+        Task<bool> Set(string id, IEnumerable<Event> history);
     }
 }
